@@ -17,7 +17,7 @@ Clone this repository and run the cateforize-images.py from a terminal window. T
 * A csv file where you will store your classification.
 
 The following optional flags are available:
-* -o --overwrite: Overwrites an existing csv file. If not specified, the script will create a file if a file with the provided name does not exis, or append the classification to an existing file. In that case, the script will skip all files that have already been classified.
+* -o --overwrite: Overwrites an existing csv file. If not specified, the script will create a file if a file with the provided name does not exist, or append the classification to an existing file if it exists. In the later case, the script will skip all files that have already been classified.
 * -hg -- height: Specify the height in pixels with which images are displayed in your browser.
 
 Follow the instructions in the script to learn how to include categories.
