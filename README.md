@@ -20,4 +20,10 @@ The following optional flags are available:
 * -o --overwrite: Overwrites an existing csv file. If not specified, the script will create a file if a file with the provided name does not exist, or append the classification to an existing file if it exists. In the later case, the script will skip all files that have already been classified.
 * -hg -- height: Specify the height in pixels with which images are displayed in your browser.
 
-Follow the instructions in the script to learn how to include categories.
+The script will skip any file in the directory that is not readable by pillow, so be aware of this fact if you have uncommon image formats. 
+
+To include your own categories, you have to edit the categories.csv file. Append your new categories to this file following the same structure than the base category that is included there, that is, an integer and a brief description separated by a comma. Be sure to press enter (add a new line) when entering your last category. Your can also add categories on the fly when running the script by entering "create" when asked for the category of an image.
+
+If your images are ordered by subdirectories within a large subdirectory, a useful default classification option alllows you to classify all remaining images on a subdirectry as the base class by entering "f". This is useful when each subdirectory represents a document and your are looking for specific pages within the document that are always on a block within the document, and therefore once you whent through the last one you don't need to go through the rest which you know are part of the base category.
+
+Comments on how to improve this simple script are Welcome!
