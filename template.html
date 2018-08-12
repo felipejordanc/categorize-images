@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Current Image</title>
+  <meta charset="utf-8">
+  <meta name="viewport">
+
+<style>
+div{
+  text-align:center
+}
+
+img{
+  height:400px;
+}
+</style>
+</head>
+<body>
+  <div>
+      <p>Place the browser in a place where you can see it while classifying the images on the images. Select the terminal window to continue the classification, focus will remain on that window.</p>
+      <img src="./current_image.jpg" id="myImage" alt="Images will be displayed here">
+  </div>
+<script>
+var myImageElement = document.getElementById('myImage');
+myImageElement.src = 'current_image.jpg?rand=' + Math.random();
+setInterval(function() {
+    var myImageElement = document.getElementById('myImage');
+    myImageElement.src = 'current_image.jpg?rand=' + Math.random();
+}, 100);
+</script>
+</body>
+</html>
