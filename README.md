@@ -12,7 +12,7 @@ This script works with Python 3.0 or higher. Probably all of the packages it use
 * argparse
 
 ## Usage ##
-Clone this repository and run the cateforize-images.py from a terminal window. This script takes two required possitional arguments:
+Fork this repository and run the cateforize-images.py from a terminal window. This script takes two required possitional arguments:
 * A directory in your local filesystem that contains the images you want to classify.
 * A csv file where you will store your classification.
 
