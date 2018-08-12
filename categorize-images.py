@@ -106,6 +106,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
             try:
                 img = Image.open(file_path)
             except:
+                print('\n\nThe file {0} was not recognized by pillow as an image. Continuing to next file'.format(file_path))
                 continue
 
             # If the breaker is on, the classify all remaining images in the
