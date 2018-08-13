@@ -31,7 +31,7 @@ def main():
         sys.exit('{0} is not a valid directory.'.format(inputpath))
 
     # Welcome message:
-    print('\nWelcome to the check-files script.\n\nThis script will loop through the directory you selected as the first argument, and show you each image located in that directory tree using your default browser. By default, the image will be displayed with a height of 600 pixels, but you can modify this value by giving the desire number of pixels as an integer to the -hg flag.\n\nYou will be asked to classify each image, and the results will be saved to the csv file you selected as the second argument. If the file already exists, the script will pick up the work from where you left it last time and append the new results to the file. If it does not exist, it will create the file. You can use the -o flag to overwrite an existing file.\n\nYou can add categories editting the categories.csv file before running this script (following the same structure that the base class, that is, a unique integer and a description separated by a comma), or on the fly by entering "create" when asked to classify an image. If you modify the file, enter a new line (press enter) at the end of your last category to be able to add categories on the fly later on.\n\n')
+    print('\nWelcome to the check-files script.\nThis script will loop through the directory you selected as the first argument, and show you each image located in that directory tree using your default browser. By default, the image will be displayed with a height of 600 pixels, but you can modify this value by giving the desire number of pixels as an integer to the -hg flag.\nYou will be asked to classify each image, and the results will be saved to the csv file you selected as the second argument. If the file already exists, the script will pick up the work from where you left it last time and append the new results to the file. If it does not exist, it will create the file. You can use the -o flag to overwrite an existing file.\nYou can add categories editting the categories.csv file before running this script (following the same structure that the base class, that is, a unique integer and a description separated by a comma), or on the fly by entering "create" when asked to classify an image. If you modify the file, enter a new line (press enter) at the end of your last category to be able to add categories on the fly later on.\n')
 
     display_categories()
 
@@ -46,12 +46,12 @@ def main():
         temp.close()
 
     # We open the html_template in the user's default browser:
-    print('\n\n The script will now open your default web browser, where images will be displayed. ')
+    print('\n The script will now open your default web browser, where images will be displayed. ')
     webbrowser.open('file://{0}'.format(os.path.abspath('template.html')))
 
     # If the overwrite flag is on, we confirm the user know what is doing.
     if overwrite:
-        o = input("\n\nYou selected the overwrite flag. Are you sure you want to overwrite {0}? All saved classifications will be lost [y/n]: ".format(outputfile))
+        o = input("\nYou selected the overwrite flag. Are you sure you want to overwrite {0}? All saved classifications will be lost [y/n]: ".format(outputfile))
         if   o in ['n','N','No','NO']:
             sys.exit('Try again without the overwrite flag')
         elif o in ['y','Y','yes','Yes','YES']:
@@ -62,7 +62,7 @@ def main():
     # If no overwrite flag exists and file exists, we inform of what will happendself.
     # That is, that new data will be appended to the existing file.
     elif os.path.exists(outputfile):
-        print('\n\n{0} already exists. Files that have been already classified will be skipped, and the classification will be appended to {0}'.format(outputfile))
+        print('\n{0} already exists. Files that have been already classified will be skipped, and the classification will be appended to {0}'.format(outputfile))
         interate_through_tree(inputpath,outputfile,overwrite)
 
     # Otherwise we just interate through the file tree
@@ -106,7 +106,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
             try:
                 img = Image.open(file_path)
             except:
-                print('\n\nThe file {0} was not recognized by pillow as an image. Continuing to next file'.format(file_path))
+                print('\nThe file {0} was not recognized by pillow as an image. Continuing to next file'.format(file_path))
                 continue
 
             # If the breaker is on, the classify all remaining images in the
@@ -130,7 +130,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
             # same file to do it right
 
             while True:
-                print('\n\nOpening file {0} in your browser for classification\n'.format(file))
+                print('\nOpening file {0} in your browser for classification\n'.format(file))
                 # We load the image and save it in the tmp folder
                 img = Image.open(file_path)
                 img_temp = 'current_image.jpg'
@@ -194,7 +194,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                         break
 
                 else:
-                    print('Not a valid input.\n')
+                    print('\n\tNot a valid input.')
                     display_categories()
                     continue
     try:
@@ -203,7 +203,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
         pass
 
 def display_categories():
-        print('From the classes you have in your categories.csv file, this are the instructions for classifying an image:\n\n')
+        print('From the classes you have in your categories.csv file, this are the instructions for classifying an image:\n')
         with open('categories.csv','r') as classes:
             for type in classes:
                 try:
@@ -213,6 +213,7 @@ def display_categories():
         print('\t- Enter f to classify the rest of the images in a directory as the base category (1)')
         print('\n\t- Enter h to see the available categories and their descriptions.')
         print('\n\t- Enter create to create a new category on the fly.')
+        print('\n\t- Enter q to exit the script (your result from the images you have classified have been saved).')
 
 if __name__=='__main__':
     main()
