@@ -14,7 +14,7 @@ This script works with Python 3.0 or higher. Probably all of the packages it use
 ## Usage ##
 Fork this repository and run the cateforize-images.py from a terminal window. This script takes two required possitional arguments:
 * A directory in your local filesystem that contains the images you want to classify.
-* A csv file where you will store your classification.
+* A csv file where the classifications will be saved. Each image you classify corresponds to a line in this file, that indicates the absolute path to the image and its class, separated by a comma.
 
 The following optional flags are available:
 * -o --overwrite: Overwrites an existing csv file. If not specified, the script will create a file if a file with the provided name does not exist, or append the classification to an existing file if it exists. In the later case, the script will skip all files that have already been classified.
@@ -27,3 +27,4 @@ To include your own categories, you have to edit the categories.csv file. Append
 If your images are ordered by subdirectories within a parent directory, a useful default classification option allows you to classify all remaining images in a subdirectry as the base class by entering "f". This is useful when each subdirectory represents a document and your are looking for specific pages within the document that are always next to each other within a document, and therefore once you went through the last one you don't need to go through the rest, which you know are part of the base category.
 
 Comments on how to improve this simple script are Welcome!
+
