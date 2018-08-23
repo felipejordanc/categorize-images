@@ -14,7 +14,7 @@ Usage:
 extract_img1.py original_dir target_dir [-o]
 
 author: Felipe Jordan*
-* The part of the code that extracts the jpg from the pdf is a modification of Ned Batchedler's code available at
+* The part of the code that extracts the jpg from the pdf is a modification of Ned Batchelder's code available at
   https://nedbatchelder.com/blog/200712/extracting_jpgs_from_pdfs.html
 '''
 
