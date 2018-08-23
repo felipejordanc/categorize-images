@@ -33,7 +33,7 @@ By default, the script accepts the following inputs when asking for a class:
 *b: Goes back and delates the lastly classified image, so you can reclassify it. You can go further back by repeatedly entering b. This speeds up the classification in cases where most images belong to the base category, as you can classify them quickly and go back when you see that another class passed by.
 
 ### Auxiliary code to extract images ###
-The repository also includes a script called extract-images.py. This is a script that is very specific to a particular application I worked on, but may be helpful for others if facing a similar situation (even directly or providing a good baseline to adapt the code). The script will loop through a directory structure and create a mirror directory structure with symbolic links to images and jpg images for jpg images embedded into Pdf's. The part that extracts jpg images embbeded into Pdf's was build on top of a code I found in [Ned Batchedler's blog](https://nedbatchelder.com/blog/200712/extracting_jpgs_from_pdfs.html).
+The repository also includes a script called extract-images.py. This is a script that is very specific to a particular application I worked on, but may be helpful for others if facing a similar situation (even directly or providing a good baseline to adapt the code). The script will loop through a directory structure and create a mirror directory structure with symbolic links to images and jpg images for jpg images embedded into Pdf's. The part that extracts jpg images embbeded into Pdf's was build on top of a code I found in [Ned Batchelder's blog](https://nedbatchelder.com/blog/200712/extracting_jpgs_from_pdfs.html).
 
 Comments on how to improve these scripts are Welcome!
 
