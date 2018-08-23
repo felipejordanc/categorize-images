@@ -24,7 +24,7 @@ The script will skip any file in the directory that is not readable by pillow, s
 
 To include your own categories, you have to edit the categories.csv file. Append your new categories to this file following the same structure than the base category that is included there, that is, an integer and a brief description separated by a comma. Be sure to press enter (add a new line) when entering your last category. Your can also add categories on the fly when running the script by entering "create" when asked for the category of an image.
 
-###Default allowed inputs###
+### Default allowed inputs ###
 By default, the script accepts the following inputs when asking for a class:
 *1: Base category, it is written into categories.csv.
 *h: Display the allowed inputs, which are given by the default allowed inputs plus the classes written into the categories.csv file.
@@ -32,7 +32,7 @@ By default, the script accepts the following inputs when asking for a class:
 *f: Classify all remaining images in a subdirectry as the base class. This is useful when each subdirectory represents a document and your are looking for specific pages within the document that are always next to each other, and therefore once you went through the last one you don't need to go through the rest (because you can safely assume they are part of the base category).
 *b: Goes back and delates the lastly classified image, so you can reclassify it. You can go further back by repeatedly entering b. This speeds up the classification in cases where most images belong to the base category, as you can classify them quickly and go back when you see that another class passed by.
 
-###Auxiliary code to extract images###
+### Auxiliary code to extract images ###
 The repository also includes a script called extract-images.py. This is a script that is very specific to a particular application I worked on, but may be helpful for others if facing a similar situation (even directly or providing a good baseline to adapt the code). The script will loop through a directory structure and create a mirror directory structure with symbolic links to images and jpg images for jpg images embedded into Pdf's. The part that extracts jpg images embbeded into Pdf's was build on top of a code I found in [Ned Batchedler's blog](https://nedbatchelder.com/blog/200712/extracting_jpgs_from_pdfs.html).
 
 Comments on how to improve these scripts are Welcome!
