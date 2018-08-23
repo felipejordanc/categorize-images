@@ -1,3 +1,14 @@
+#! python
+'''
+This script will loop through the directory you selected as the first argument, and show you each image located in that directory tree using your default browser. By default, the image will be displayed with a height of 600 pixels, but you can modify this value by giving the desire number of pixels as an integer to the -hg flag.
+
+You will be asked to classify each image, and the results will be saved to the csv file you selected as the second argument. If the file already exists, the script will pick up the work from where you left it last time and append the new results to the file. If it does not exist, it will create the file. You can use the -o flag to overwrite an existing file.
+
+You can add categories editting the categories.csv file before running this script (following the same structure that the base class, that is, a unique integer and a description separated by a comma), or on the fly by entering "create" when asked to classify an image. If you modify the file, enter a new line (press enter) at the end of your last category to be able to add categories on the fly later on.
+
+The script requires a directory tree that at the end leads to images. Everything that is not regognized by pillow as an image will be ignored. You can use the extract-images.py auxiliary code to build this tree structure if you have PDF's that encapsulate jpg images. See the headding of that code for more information.
+'''
+
 import os,sys
 import argparse
 from PIL import Image
@@ -22,16 +33,16 @@ def main():
 
     # If the paths are relative, we append the working directory
     if not os.path.isabs(inputpath):
-        inputpath  = os.path.join(os.getcwd(),inputpath)
+        inputpath  = os.path.abspath(os.path.join(os.getcwd(),inputpath))
     if not os.path.isabs(outputfile):
-        outputfile = os.path.join(os.getcwd(),outputfile)
+        outputfile = os.path.abspath(os.path.join(os.getcwd(),outputfile))
 
     # We exit the program if the directory is not found
     if not os.path.isdir(inputpath):
         sys.exit('{0} is not a valid directory.'.format(inputpath))
 
     # Welcome message:
-    print('\nWelcome to the check-files script.\n\nThis script will loop through the directory you selected as the first argument, and show you each image located in that directory tree using your default browser. By default, the image will be displayed with a height of 600 pixels, but you can modify this value by giving the desire number of pixels as an integer to the -hg flag.\n\nYou will be asked to classify each image, and the results will be saved to the csv file you selected as the second argument. If the file already exists, the script will pick up the work from where you left it last time and append the new results to the file. If it does not exist, it will create the file. You can use the -o flag to overwrite an existing file.\n\nYou can add categories editting the categories.csv file before running this script (following the same structure that the base class, that is, a unique integer and a description separated by a comma), or on the fly by entering "create" when asked to classify an image. If you modify the file, enter a new line (press enter) at the end of your last category to be able to add categories on the fly later on.')
+    print('\nWelcome to the check-files script.\n\nThis script will loop through the directory you selected as the first argument, and show you each image located in that directory tree using your default browser. By default, the image will be displayed with a height of 600 pixels, but you can modify this value by giving the desire number of pixels as an integer to the -hg flag.\n\nYou will be asked to classify each image, and the results will be saved to the csv file you selected as the second argument. If the file already exists, the script will pick up the work from where you left it last time and append the new results to the file. If it does not exist, it will create the file. You can use the -o flag to overwrite an existing file.\n\nYou can add categories editting the categories.csv file before running this script (following the same structure that the base class, that is, a unique integer and a description separated by a comma), or on the fly by entering create when asked to classify an image. If you modify the file, enter a new line (press enter) at the end of your last category to be able to add categories on the fly later on.\n\nThe script expects a directory tree filled with images. Everything that is not recognized by pillow as an image will be ignored. You can use the extract-images.py auxiliary code to build this tree structure if you have PDF's that encapsulate jpg images. See the headding of that code for more information.')
 
     display_categories()
 
@@ -71,28 +82,26 @@ def main():
 
 
 def interate_through_tree(inputpath,outputfile,overwrite):
+
+    # If the file does not exists or the overwrite flag is on, we create/overwrite the file.
+    if (not os.path.isfile(outputfile)) or overwrite:
+        with open(outputfile,'w') as of:
+            of.write('path,class\n')
+
     for dirpath, dirnames, filenames in os.walk(inputpath):
 
         # We are not interested in directories with no files
         if len(filenames)==0:
             continue
 
-        # If the file exists or the overwrite flag is on, we create/overwrite the file.
-        if (not os.path.isfile(outputfile)) or overwrite:
-            with open(outputfile,'w') as of:
-                of.write('path,class\n')
-            past_paths=[]
-
-        # Otherwise, we reed the file to capture what files have been visited
-        else:
-            with open(outputfile,'r') as of:
-                past_paths = [re.search("^(.*),",line).group(1)  for line in of]
+        # We reed the file to capture what files have been visited
+        with open(outputfile,'r') as of:
+            past_paths = [re.search("^(.*),",line).group(1)  for line in of]
 
         # This will break the loop through the files in one subdirectory. Used for
         # "express classification" when you know all the files that are left are
         # from the base class.
         breaker=False
-
         for i, file in enumerate(sorted(filenames)):
 
             # The absolute path to the file
@@ -198,6 +207,19 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                             print('\n\t\tImage classified as "{0}" ({1})'.format(des,cat))
                         break
 
+                elif choice=='b':
+                    # Removing last line of the saved file and running this function again
+                    # with the overwrite option off to classify the past image again
+                    with open(outputfile,'r')as temp:
+                        temp_lines = temp.readlines()
+                        temp.close()
+
+                    with open(outputfile,'w') as temp:
+                        temp.writelines(temp_lines[:-1])
+                        temp.close()
+                    overwrite=False
+                    interate_through_tree(inputpath,outputfile,overwrite)
+
                 else:
                     print('\n\tNot a valid input. Type h to see available options.')
                     continue
@@ -217,6 +239,7 @@ def display_categories():
         print('\t- Enter f to classify the rest of the images in a subdirectory as the base category (1)')
         print('\t- Enter h to see this message.')
         print('\t- Enter create to create a new category on the fly.')
+        print('\t- Enter b to remove the classification of the last image and classify it again.')
         print('\t- Enter q to exit the script (your result from the images you have classified have been saved).')
         print('You may also add new categories by editing the categories.csv file before running this script.')
 
