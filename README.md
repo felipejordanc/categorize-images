@@ -30,7 +30,7 @@ By default, the script accepts the following inputs when asking for a class:
 * 1: Base category, it is written into categories.csv.
 * h: Display the allowed inputs, which are given by the default allowed inputs plus the classes written into the categories.csv file.
 * create: Creates new category on the file and appends it to the categories.csv file.
-* f x: Classify the following x images in the current subdirectory as the base class, or all non-classified images in the current subdirectory if x is larger than the number of non classified images in the current subdirectory. If an integer is not specified, all the images that have not been classified in the current subdirectory will be classified as the base class. These images will be display on your browser at a rate of 5 images per second, so you can inspect whether all images where in fact part of the base class.
+* f x: Classify the following x images in the current subdirectory as the base class, or all non-classified images in the current subdirectory if x is larger than the number of non classified images in the current subdirectory. If an integer is not specified, all the images that have not been classified in the current subdirectory will be classified as the base class. These images will be displayed on your browser at a rate of 5 images per second, so you can inspect whether all images were in fact part of the base class.
 * b x: Delate the classification of the last x classified images from the output database, and goes back to reclassify those images. If no integer is specified, delates only the last classified image.
 
 ### Auxiliary code to extract images ###
