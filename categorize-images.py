@@ -14,9 +14,12 @@ import argparse
 from PIL import Image
 import re
 import webbrowser
+from time import sleep
 
 def main():
-
+    '''
+    This function parse the arguments and explain the user how to use de code and makes sure the user know what is doing if using the overwrite flag. Then, it calls the interate_trhough_tree function that does most of the work with.
+    '''
     # Parsing the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("search_dir", help="directory you will classify")
@@ -28,6 +31,8 @@ def main():
     args = parser.parse_args()
     overwrite  = args.overwrite
     height  = args.height
+
+    global inputpath, outputfile
     inputpath  = args.search_dir
     outputfile = args.save_file
 
@@ -80,13 +85,18 @@ def main():
     else:
         interate_through_tree(inputpath,outputfile,overwrite)
 
-
 def interate_through_tree(inputpath,outputfile,overwrite):
-
+    '''
+    This function is the core of the program. It iterates trhough the non-visited images of the directory tree for classification.
+    '''
     # If the file does not exists or the overwrite flag is on, we create/overwrite the file.
     if (not os.path.isfile(outputfile)) or overwrite:
         with open(outputfile,'w') as of:
             of.write('path,class\n')
+
+    # We reed the file to capture what files have been visited
+    with open(outputfile,'r') as of:
+        past_paths = [re.search("^(.*),",line).group(1)  for line in of]
 
     for dirpath, dirnames, filenames in os.walk(inputpath):
 
@@ -94,14 +104,9 @@ def interate_through_tree(inputpath,outputfile,overwrite):
         if len(filenames)==0:
             continue
 
-        # We reed the file to capture what files have been visited
-        with open(outputfile,'r') as of:
-            past_paths = [re.search("^(.*),",line).group(1)  for line in of]
-
         # This will break the loop through the files in one subdirectory. Used for
         # "express classification" when you know all the files that are left are
         # from the base class.
-        breaker=False
         for i, file in enumerate(sorted(filenames)):
 
             # The absolute path to the file
@@ -109,6 +114,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
 
             # Skip file if already classified
             if file_path in past_paths:
+                print(file_path)
                 continue
 
             # Skip if file is not an image that pil can open
@@ -118,25 +124,7 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                 print('\nThe file {0} was not recognized by pillow as an image. Continuing to next file'.format(file_path))
                 continue
 
-            # If the breaker is on, the classify all remaining images in the
-            # subdirectory as the base class.
-            if breaker:
-                with open(outputfile,'a') as of:
-                    for file in sorted(filenames)[i:]:
-                        # Show Images in browser passing fast
-                        img = Image.open(file_path)
-                        img_temp = 'current_image.jpg'
-                        img.save(img_temp)
-
-                        #Saving file as base category and informing the users
-                        file_path = os.path.join(dirpath,file)
-                        of.write(file_path+',1\n')
-                        print('\n\t\t{0} classified as "{1}" ({2})\n'.format(file_path,'base',1))
-                    of.close()
-                break
-
-            # This loop allow the user to make mistakes and come back to the
-            # same file to do it right
+            # This loop allow the user to make mistakes and come back to the same file to do it right
 
             while True:
                 print('\nOpening {0} in your browser for classification'.format(file_path))
@@ -149,7 +137,6 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                 choice = input("\n\tPlease enter class (enter h to see options): ")
 
                 with open('categories.csv','r') as categories:
-                    #valid_cat = [cat.split(',')[0] for cat in categories ]
                     cat_dict  = {key:des for (key,des) in iter([tuple(cat.split(',')) for cat in categories])}
                     valid_cat = cat_dict.keys()
                     categories.close()
@@ -162,21 +149,24 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                     print('\n\tImage classified as "{0}" ({1})'.format(cat_dict[choice].strip(),choice))
                     break
 
-                elif choice=='f':
-                    sure=input('\n\tAre you sure you want to classify all remaining images in the current subdirectory as the base category? [y/n]: ')
-                    if sure in ['y','Y','yes','YES']:
-                        breaker=True
-                        with open(outputfile,'a') as of:
-                            of.write(file_path+',1\n')
-                            of.close()
-                            print('\n\t\tImage classified as "{0}" ({1})'.format('base',1))
-                        break
-                    elif sure in ['n','N','no','NO']:
-                        continue
+                elif bool(re.search('^f( [0-9]*)?',choice)):
+                    # Classify n lines as base category.
+                    try:
+                        n = int(re.search('^f( [0-9]*)',choice).group(1).strip())
+                    except:
+                        n= len(sorted(filenames)[i:])
+                    fast_forward(filenames,dirpath,i,n)
+                    # If the subdirectory is the last one, fast forward will run at the end the interate_through_tree function and skip all files (because all of them have been classified). The the program will exit the function and prompt you to classify the image that was open before entering f. For that reason, we need to exit the program if we reach this point
+                    sys.exit(0)
 
-                    else:
-                        print("\n\t\tNot valid input, only accepts y or n")
-                        continue
+                elif bool(re.search('^b( [0-9]*)?',choice)):
+                    # Removing last n lines of the saved file and running this function again with the overwrite option off to classify the past image again
+                    try:
+                        n = int(re.search('^b( [0-9]*)',choice).group(1).strip())
+                    except:
+                        print('We are in except')
+                        n= 1
+                    move_backward(n)
 
                 elif choice=='h':
                     display_categories()
@@ -207,19 +197,6 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                             print('\n\t\tImage classified as "{0}" ({1})'.format(des,cat))
                         break
 
-                elif choice=='b':
-                    # Removing last line of the saved file and running this function again
-                    # with the overwrite option off to classify the past image again
-                    with open(outputfile,'r')as temp:
-                        temp_lines = temp.readlines()
-                        temp.close()
-
-                    with open(outputfile,'w') as temp:
-                        temp.writelines(temp_lines[:-1])
-                        temp.close()
-                    overwrite=False
-                    interate_through_tree(inputpath,outputfile,overwrite)
-
                 else:
                     print('\n\tNot a valid input. Type h to see available options.')
                     continue
@@ -242,6 +219,40 @@ def display_categories():
         print('\t- Enter b to remove the classification of the last image and classify it again.')
         print('\t- Enter q to exit the script (your result from the images you have classified have been saved).')
         print('You may also add new categories by editing the categories.csv file before running this script.')
+
+def fast_forward(filenames,dirpath,i,n):
+    '''
+    This function will authomatically classify the n following Images as part of the base category, showing each image in the browser for 200 microseconds.
+    '''
+    move_forward=i+min(n,len(sorted(filenames)[i:]))
+    with open(outputfile,'a') as of:
+        for file in sorted(filenames)[i:move_forward]:
+            file_path = os.path.join(dirpath,file)
+
+            # Show Images in browser passing fast
+            img = Image.open(file_path)
+            img_temp = 'current_image.jpg'
+            img.save(img_temp)
+
+            #Saving file as base category and informing the users
+            of.write(file_path+',1\n')
+            print('\n\t\t{0} classified as "{1}" ({2})\n'.format(file_path,'base',1))
+            sleep(0.2)
+    of.close()
+    interate_through_tree(inputpath,outputfile,False)
+
+def move_backward(n):
+    '''
+    This function will delate the classification of the past n images and open your browser in the first of the delated images to restart the classification.
+    '''
+    with open(outputfile,'r')as temp:
+        temp_lines = temp.readlines()
+        temp.close()
+
+    with open(outputfile,'w') as temp:
+        temp.writelines(temp_lines[:-n])
+        temp.close()
+    interate_through_tree(inputpath,outputfile,False)
 
 if __name__=='__main__':
     main()
