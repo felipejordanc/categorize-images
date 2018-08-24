@@ -114,7 +114,6 @@ def interate_through_tree(inputpath,outputfile,overwrite):
 
             # Skip file if already classified
             if file_path in past_paths:
-                print(file_path)
                 continue
 
             # Skip if file is not an image that pil can open
@@ -149,20 +148,20 @@ def interate_through_tree(inputpath,outputfile,overwrite):
                     print('\n\tImage classified as "{0}" ({1})'.format(cat_dict[choice].strip(),choice))
                     break
 
-                elif bool(re.search('^f( [0-9]*)?',choice)):
+                elif bool(re.search('^f( ?[0-9]*)?',choice)):
                     # Classify n lines as base category.
                     try:
-                        n = int(re.search('^f( [0-9]*)',choice).group(1).strip())
+                        n = int(re.search('^f( ?[0-9]*)',choice).group(1).strip())
                     except:
                         n= len(sorted(filenames)[i:])
                     fast_forward(filenames,dirpath,i,n)
                     # If the subdirectory is the last one, fast forward will run at the end the interate_through_tree function and skip all files (because all of them have been classified). The the program will exit the function and prompt you to classify the image that was open before entering f. For that reason, we need to exit the program if we reach this point
                     sys.exit(0)
 
-                elif bool(re.search('^b( [0-9]*)?',choice)):
+                elif bool(re.search('^b( ?[0-9]*)?',choice)):
                     # Removing last n lines of the saved file and running this function again with the overwrite option off to classify the past image again
                     try:
-                        n = int(re.search('^b( [0-9]*)',choice).group(1).strip())
+                        n = int(re.search('^b( ?[0-9]*)',choice).group(1).strip())
                     except:
                         print('We are in except')
                         n= 1
