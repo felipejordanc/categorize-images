@@ -15,6 +15,7 @@ This script works with Python 3.0 or higher. Probably all of the packages it use
 Additionally, the script needs to have the following supportive files in the same directory to work:
 * categories.csv
 * template.html
+
 Both files are part of this repository.
 
 ## Usage ##
