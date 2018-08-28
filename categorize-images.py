@@ -98,7 +98,7 @@ def categorize_images():
 
 def interate_through_tree():
     '''
-    This function is the core of the program. It iterates trhough the non-visited images of the directory tree for classification.
+    This function is the core of the program. It iterates through the non-visited images of the directory tree for classification.
     '''
 
     # Helper functions defined in this scope
@@ -146,15 +146,13 @@ def interate_through_tree():
     with open(outputfile,'r') as of:
         past_paths = [re.search("^(.*),",line).group(1)  for line in of]
 
-    for dirpath, dirnames, filenames in os.walk(inputpath):
+    for dir_name in sorted(zip(os.walk(inputpath))):
 
+        # The sorted(zip) assures that the script will loop through directories in alphabetical order.
+        dirpath, dirnames, filenames = dir_name[0]
         # We are not interested in directories with no files
         if len(filenames)==0:
             continue
-
-        # This will break the loop through the files in one subdirectory. Used for
-        # "express classification" when you know all the files that are left are
-        # from the base class.
 
         n_images = len(filenames)
 
